@@ -3,7 +3,7 @@
 ### Memory-based Collaborative Filtering Algorithm Starter Code ###
 ###################################################################
 
-### Authors: CIndy Rush
+### Authors: Cindy Rush
 ### Project 3
 ### ADS Spring 2018
 
@@ -13,11 +13,11 @@
 ########################################################
 
 
-setwd("/Users/cynthiarush/Dropbox/ADS_Spring_2018/Project3/Class2")
+setwd("/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/lib")
 source("functions.R")
 
 
-setwd("/Users/cynthiarush/Dropbox/ADS_Spring_2018/Project3/Proj3_Data/MS_sample")
+setwd("/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/data/MS_sample")
 
 # Load the data
 MS_train <- read.csv("data_train.csv", as.is = TRUE, header = TRUE)
@@ -62,7 +62,7 @@ all(vec == rowSums(MS_UI, na.rm = TRUE))
 ######## Building the UI matrix for the EachMovie Data ########
 ###############################################################
 
-setwd("/Users/cynthiarush/Dropbox/ADS_Spring_2018/Project3/Proj3_Data/eachmovie_sample")
+setwd("/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/data/eachmovie_sample")
 
 # Load the data
 movie_train <- read.csv("data_train.csv", as.is = TRUE, header = TRUE)
