@@ -12,8 +12,21 @@
 ######## Building the UI matrix for the MS Data ########
 ########################################################
 
+packages.used <- c('lsa')
+
+# check packages that need to be installed.
+packages.needed <- setdiff(packages.used, intersect(installed.packages()[,1], packages.used))
+
+# install additional packages
+if(length(packages.needed) > 0) {
+  install.packages(packages.needed, dependencies = TRUE, repos = 'http://cran.us.r-project.org')
+}
+
+library(lsa)
 
 setwd("/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/lib")
+
+#change source function as needed
 source("functions.R")
 
 
@@ -29,7 +42,7 @@ MS_train <- MS_train[, 2:4] # get rid of first column: row number
 
 # Below takes 2.17 minutes
 MS_UI <- MS_data_transform(MS_train)
-save(MS_UI, file = "MS_UI.RData")
+save(MS_UI, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/MS_UI.RData")
 
 
 # Matrix Calculations
@@ -120,7 +133,7 @@ movie_train <- movie_train[, 2:4] # get rid of first column: row number
 # Below takes about 4 minutes
 
 movie_UI <- movie_data_transform(movie_train)
-save(movie_UI, file = "movie_UI.RData")
+save(movie_UI, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_UI.RData")
 
 # Some calculations
 total_ratings <- rowSums(movie_UI, na.rm = TRUE)
@@ -180,7 +193,7 @@ median(total_ratings)
 # change method = "pearson" to "spearman" for Task B (1)
 
 movie_sim <- calc_weight(movie_UI)
-save(movie_sim, file = "movie_sim.RData")
+save(movie_sim, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_sim.RData")
 
 
 # Calculate the full similarity weights on the MS data
@@ -189,7 +202,7 @@ save(movie_sim, file = "movie_sim.RData")
 # change method = "pearson" to "spearman" for Task B (1)
 
 MS_sim <- calc_weight(MS_UI)
-save(MS_sim, file = "MS_sim.RData")
+save(MS_sim, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/MS_sim.RData")
 
 
 
@@ -248,10 +261,10 @@ save(MS_sim, file = "MS_sim.RData")
 # This calculation took me 15 minutes
 
 MS_pred <- pred_matrix(MS_UI, MS_sim)
-save(MS_pred, file = "MS_pred.RData")
+save(MS_pred, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/MS_pred.RData")
 
 # Calculate predictions for movies
 # This calculation took me 2493 second
 
 movie_pred <- pred_matrix(movie_UI, movie_sim)
-save(movie_pred, file = "movie_pred.RData")
+save(movie_pred, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_pred.RData")

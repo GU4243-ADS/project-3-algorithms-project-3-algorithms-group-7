@@ -86,10 +86,10 @@ movie_data_transform <- function(movie) {
 
 
 
+#install.packages('lsa')
+library(lsa)
 
-
-
-calc_weight <- function(data, method = "cosine") {
+calc_weight <- function(data, method = 'cosine') {
   
   ## Calculate similarity weight matrix
   ##
@@ -113,12 +113,7 @@ calc_weight <- function(data, method = "cosine") {
       return(0)
     } else {
       if (method == 'cosine') {
-          rowA <- as.numeric(ifelse(is.na(rowA), 0, rowA))
-          rowB <- as.numeric(ifelse(is.na(rowB), 0, rowB))
-          output = 0
-          for (i in length(rowA)){
-          return(output = output + (rowA[i] / sqrt(sum(rowA^2))) * (rowB[i] / sqrt(sum(rowB^2))))
-      }
+          return(cosine(rowA, rowB))
     }
   }}
   
