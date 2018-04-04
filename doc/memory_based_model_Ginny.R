@@ -12,7 +12,7 @@
 ######## Building the UI matrix for the MS Data ########
 ########################################################
 
-packages.used <- c('lsa')
+packages.used <- c('lsa', 'infotheo')
 
 # check packages that need to be installed.
 packages.needed <- setdiff(packages.used, intersect(installed.packages()[,1], packages.used))
@@ -23,6 +23,7 @@ if(length(packages.needed) > 0) {
 }
 
 library(lsa)
+library(infotheo)
 
 setwd("/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/lib")
 

@@ -86,15 +86,14 @@ movie_data_transform <- function(movie) {
 
 
 
-#install.packages('lsa')
-library(lsa)
+library(infotheo)
 
-calc_weight <- function(data, method = 'cosine') {
+calc_weight <- function(data, method = "entropy") {
   
   ## Calculate similarity weight matrix
   ##
   ## input: data   - movie data or MS data in user-item matrix form
-  ##        method - 'pearson'
+  ##        method - 'entropy'
   ##
   ## output: similarity weight matrix
   
@@ -112,8 +111,8 @@ calc_weight <- function(data, method = 'cosine') {
     if (sum(joint_values) == 0) {
       return(0)
     } else {
-      if (method == 'cosine') {
-          return(cosine(rowA[joint_values], rowB[joint_values]))
+      if (method == 'entropy') {
+          return(mutinformation(rowA[joint_values], rowB[joint_values]))
     }
   }}
   
