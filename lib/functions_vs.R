@@ -113,7 +113,7 @@ calc_weight <- function(data, method = 'cosine') {
       return(0)
     } else {
       if (method == 'cosine') {
-          return(cosine(rowA, rowB))
+          return(cosine(rowA[joint_values], rowB[joint_values]))
     }
   }}
   
