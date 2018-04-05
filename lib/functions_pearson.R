@@ -121,7 +121,7 @@ calc_weight <- function(data, method = "pearson") {
   # Loops over the rows and calculate sall similarities using weight_func
   for(i in 1:nrow(data)) {
     weight_mat[i, ] <- apply(data, 1, weight_func, data[i, ])
-    print(i)
+#    print(i)
   }
   return(round(weight_mat, 4))
 }

@@ -193,7 +193,7 @@ median(total_ratings)
 
 # change method = "pearson" to "spearman" for Task B (1)
 
-movie_sim <- calc_weight(movie_UI)
+system.time(movie_sim <- calc_weight(movie_UI))
 save(movie_sim, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_sim.RData")
 
 
@@ -202,7 +202,7 @@ save(movie_sim, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-p
 
 # change method = "pearson" to "spearman" for Task B (1)
 
-MS_sim <- calc_weight(MS_UI)
+system.time(MS_sim <- calc_weight(MS_UI))
 save(MS_sim, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/MS_sim.RData")
 
 
@@ -261,11 +261,11 @@ save(MS_sim, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-proj
 # Calculate predictions for MS
 # This calculation took me 15 minutes
 
-MS_pred <- pred_matrix(MS_UI, MS_sim)
+system.time(MS_pred <- pred_matrix(MS_UI, MS_sim))
 save(MS_pred, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/MS_pred.RData")
 
 # Calculate predictions for movies
 # This calculation took me 2493 second
 
-movie_pred <- pred_matrix(movie_UI, movie_sim)
+system.time(movie_pred <- pred_matrix(movie_UI, movie_sim))
 save(movie_pred, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_pred.RData")
