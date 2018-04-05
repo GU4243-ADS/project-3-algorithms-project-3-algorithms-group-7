@@ -28,36 +28,36 @@ library(infotheo)
 setwd("/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/lib")
 
 #change source function as needed
-source("functions_spearman.R")
+source("functions_entropy.R")
 
 
 setwd("/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/data/MS_sample")
 
 # Load the Microsoft MS data
-MS_train <- read.csv("data_train.csv", as.is = TRUE, header = TRUE)
-MS_train <- MS_train[, 2:4] # get rid of first column: row number
+#MS_train <- read.csv("data_train.csv", as.is = TRUE, header = TRUE)
+#MS_train <- MS_train[, 2:4] # get rid of first column: row number
 
 
 # Transform from narrow to wide, i.e. user-item matrix (UI matrix)
 # Using MS_data_transform function
 
 # Below takes 2.17 minutes
-MS_UI <- MS_data_transform(MS_train)
-save(MS_UI, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/MS_UI.RData")
+#MS_UI <- MS_data_transform(MS_train)
+#save(MS_UI, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/MS_UI.RData")
 
 
 # Matrix Calculations
 # Number of pages visited for each user
-visit_nums <- rowSums(MS_UI != 0)
+#visit_nums <- rowSums(MS_UI != 0)
 
 # Frequency count of how many users visited 6, 7, 8, etc pages, histogram
-table(visit_nums)
+#table(visit_nums)
 
 # Mean of number of pages visted among users
-mean(visit_nums)
+#mean(visit_nums)
 
 # Median of number of pages visted among users
-median(visit_nums)
+#median(visit_nums)
 
 
 ###############################################################
@@ -67,22 +67,22 @@ median(visit_nums)
 setwd("/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/data/eachmovie_sample")
 
 # Load the data
-movie_train <- read.csv("data_train.csv", as.is = TRUE, header = TRUE)
-movie_train <- movie_train[, 2:4] # get rid of first column: row number
+#movie_train <- read.csv("data_train.csv", as.is = TRUE, header = TRUE)
+#movie_train <- movie_train[, 2:4] # get rid of first column: row number
 
 
 # Compute the full matrix
 # Below takes about 4 minutes
 
-movie_UI <- movie_data_transform(movie_train)
-save(movie_UI, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_UI.RData")
+#movie_UI <- movie_data_transform(movie_train)
+#save(movie_UI, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_UI.RData")
 
 # Some calculations
-total_ratings <- rowSums(movie_UI, na.rm = TRUE)
+#total_ratings <- rowSums(movie_UI, na.rm = TRUE)
 
-table(total_ratings)
-mean(total_ratings)
-median(total_ratings)
+#table(total_ratings)
+#mean(total_ratings)
+#median(total_ratings)
 
 
 #################################################################

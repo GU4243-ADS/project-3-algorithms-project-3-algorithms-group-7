@@ -163,7 +163,7 @@ pred_matrix <- function(data, simweights) {
     dev_sub    <- dev_mat[ ,cols_to_predict]
     
     pred_mat[i, cols_to_predict] <- row_avgs[i] +  apply(dev_sub * weight_sub, 2, sum, na.rm = TRUE)/sum(neighb_weights, na.rm = TRUE)
-    print(i)
+#    print(i)
   }
   
   return(pred_mat)
