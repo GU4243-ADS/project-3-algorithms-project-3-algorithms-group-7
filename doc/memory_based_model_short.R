@@ -28,7 +28,7 @@ library(infotheo)
 setwd("/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/lib")
 
 #change source function as needed
-source("functions_entropy.R")
+source("functions.R")
 
 
 setwd("/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/data/MS_sample")
