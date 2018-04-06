@@ -2,7 +2,12 @@ source(functions_meansquare.R)
 source(functions_MSD+Normalization.R)
 source(functions_simrank.R)
 
-#Mean squard deviation(MSD)
+###############################################################
+########          Mean squard deviation(MSD)           ########
+###############################################################
+
+#MSD of an estimator measures the average of the squares of the errors or deviations
+#That is, the difference between the estimator and what is estimated. 
 
 ##calulate the MSD weights for MS data
 weights_MSD_train1 <- meanSquareDiff(MS_UI)
@@ -12,7 +17,15 @@ saveRDS(weights_MSD_train1, file = "weights_MSD_MS.RData")
 weights_MSD_movie <- meanSquareDiff(movie_UI)
 saveRDS(weights_MSD_movie, file = "weights_MSD_movie.RData") 
 
-#Simrank
+
+###############################################################
+########                   Simrank                     ########
+###############################################################
+
+
+#SimRank is an important measure of vertex-pair similarity according to the structure of graphs. 
+#The similarity search based on SimRank is an important operation for identifying similar vertices in a graph and has been employed in many data analysis applications
+
 ##calulate the simrank matirx for movie data
 ##This calculation took me around 3.5 hours.
 if(model.sim.rank){
@@ -51,7 +64,13 @@ movie_pred_simrank<-cbind(rownames(movie_UI),movie_pred_simrank)
 
 save(movie_pred_simrank, file="movie_pred_simrank.RData")
 
-#MSD+Normalization
+###############################################################
+########          MSD+Normalization by Z-Score         ########
+###############################################################
+
+#Normalization or z-scores is the most commonly used method. 
+#It converts all indicators to a common scale with an average of zero and standard deviation of one.
+
 ##predict ratings using normalization+MSD on MS data
 #This calculation took me around 2.5 hours
 neighbors_MSD_MS <- selectNeighborWeights(MS_UI, weights_MSD_MS , 20)
