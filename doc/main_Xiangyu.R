@@ -2,17 +2,19 @@ source(functions_meansquare.R)
 source(functions_MSD+Normalization.R)
 source(functions_simrank.R)
 
-#Mean squard deviation
+#Mean squard deviation(MSD)
+
 ##calulate the MSD weights for MS data
 weights_MSD_train1 <- meanSquareDiff(MS_UI)
 saveRDS(weights_MSD_train1, file = "weights_MSD_MS.RData")
 
 ##calculate the MSD weights for movie data
 weights_MSD_movie <- meanSquareDiff(movie_UI)
-saveRDS(weights_MSD_movie, file = "weights_MSD_movie.RData") ##which are all NAs
+saveRDS(weights_MSD_movie, file = "weights_MSD_movie.RData") 
 
 #Simrank
 ##calulate the simrank matirx for movie data
+##This calculation took me around 3.5 hours.
 if(model.sim.rank){
   graph <- movie_UI[1:1000, 1:1000]
   
@@ -38,7 +40,7 @@ if(model.sim.rank){
 }
 
 ##predict simrank ratings on movie data
-load("output/weights_SimRank_movie")
+##This calculation took me 3 hours.
 movie_pred_simrank <- pred_matrix(movie_UI, weights_SimRank_movie)
 
 
@@ -51,10 +53,12 @@ save(movie_pred_simrank, file="movie_pred_simrank.RData")
 
 #MSD+Normalization
 ##predict ratings using normalization+MSD on MS data
+#This calculation took me around 2.5 hours
 neighbors_MSD_MS <- selectNeighborWeights(MS_UI, weights_MSD_MS , 20)
 ZScoreMatrix_MSD_MS <- computeZScoreMatrix(weights_MSD_train1, neighbors_MSD_MS, MS_UI,test1)
 
 ##predict ratings using normalization+MSD on MS data
+##This calculation took me around 2.5 hours
 neighbors_MSD_movie <- selectNeighborWeights(movie_UI, weights_MSD_movie, 20)
 ZScoreMatrix_MSD_movie <- computeZScoreMatrix(weights_MSD_train2, neighbors_MSD_movie, movie_UI,test2)
 
