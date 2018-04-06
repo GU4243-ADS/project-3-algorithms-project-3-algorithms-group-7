@@ -37,18 +37,32 @@ if(model.sim.rank){
   write.csv(user_sim, file='../output/usersim.csv', row.names = FALSE)
 }
 
+##predict simrank ratings on movie data
+load("output/weights_SimRank_movie")
+movie_pred_simrank <- pred_matrix(movie_UI, weights_SimRank_movie)
+
+
+##transform the matrix in order to do the evaluation
+rownames(movie_pred_simrank)<- rownames(movie_UI)
+colnames(movie_pred_simrank)<- colnames(movie_UI)
+movie_pred_simrank<-cbind(rownames(movie_UI),movie_pred_simrank)
+
+save(movie_pred_simrank, file="movie_pred_simrank.RData")
 
 #MSD+Normalization
-##calculate the MSD+Normalization weights on MS data
+##predict ratings using normalization+MSD on MS data
 neighbors_MSD_MS <- selectNeighborWeights(MS_UI, weights_MSD_MS , 20)
 ZScoreMatrix_MSD_MS <- computeZScoreMatrix(weights_MSD_train1, neighbors_MSD_MS, MS_UI,test1)
 
-
-##calculate the MSD+Normalization weights on movie data
+##predict ratings using normalization+MSD on MS data
 neighbors_MSD_movie <- selectNeighborWeights(movie_UI, weights_MSD_movie, 20)
 ZScoreMatrix_MSD_movie <- computeZScoreMatrix(weights_MSD_train2, neighbors_MSD_movie, movie_UI,test2)
 
-save(ZScoreMatrix_MSD_train1, file="Normalization+MSD_MS.RData")
+##transform the matrix in order to do the evaluation
+rownames(ZScoreMatrix_MSD_train1)<- rownames(MS_UI)
+colnames(ZScoreMatrix_MSD_train1)<- colnames(MS_UI)
+ZScoreMatrix_MSD_train1<-cbind(rownames(MS_UI),ZScoreMatrix_MSD_train1)
+colnames(ZScoreMatrix_MSD_train1)[1] <- "User"
 
-
+save(ZScoreMatrix_MSD_train1, file="MS_pred_Normalization_MSD.RData")
 
