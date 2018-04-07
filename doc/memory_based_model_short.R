@@ -42,8 +42,8 @@ MS_train <- MS_train[, 2:4] # get rid of first column: row number
 # Using MS_data_transform function
 
 # Below takes 2.17 minutes
-system.time(MS_UI <- MS_data_transform(MS_train))
-object.size(MS_UI <- MS_data_transform(MS_train))
+MS_UI <- MS_data_transform(MS_train)
+#object.size(MS_UI <- MS_data_transform(MS_train))
 save(MS_UI, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/MS_UI.RData")
 
 
@@ -75,8 +75,8 @@ movie_train <- movie_train[, 2:4] # get rid of first column: row number
 # Compute the full matrix
 # Below takes about 4 minutes
 
-system.time(movie_UI <- movie_data_transform(movie_train))
-object.size(movie_UI <- movie_data_transform(movie_train))
+movie_UI <- movie_data_transform(movie_train)
+#object.size(movie_UI <- movie_data_transform(movie_train))
 save(movie_UI, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_UI.RData")
 
 # Some calculations
@@ -96,7 +96,7 @@ median(total_ratings)
 # The below took 87 minutes on my Macbook, 35 on my iMac
 
 system.time(movie_sim <- calc_weight(movie_UI))
-object.size(movie_sim <- calc_weight(movie_UI))
+#object.size(movie_sim <- calc_weight(movie_UI))
 save(movie_sim, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_sim.RData")
 
 
@@ -105,7 +105,7 @@ save(movie_sim, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-p
 
 
 system.time(MS_sim <- calc_weight(MS_UI))
-object.size(MS_sim <- calc_weight(MS_UI))
+#object.size(MS_sim <- calc_weight(MS_UI))
 save(MS_sim, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/MS_sim.RData")
 
 
@@ -118,12 +118,12 @@ save(MS_sim, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-proj
 # This calculation took me 15 minutes
 
 system.time(MS_pred <- pred_matrix(MS_UI, MS_sim))
-object.size(MS_pred <- pred_matrix(MS_UI, MS_sim))
+#object.size(MS_pred <- pred_matrix(MS_UI, MS_sim))
 save(MS_pred, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/MS_pred.RData")
 
 # Calculate predictions for movies
 # This calculation took me 2493 second
 
 system.time(movie_pred <- pred_matrix(movie_UI, movie_sim))
-object.size(movie_pred <- pred_matrix(movie_UI, movie_sim))
+#object.size(movie_pred <- pred_matrix(movie_UI, movie_sim))
 save(movie_pred, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_pred.RData")
