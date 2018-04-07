@@ -10,9 +10,9 @@
 
 Term: Spring 2018
 
-+ Project title: [a title]
-+ Team Number: [a number]
-+ Team Members: [a list of team members]
++ Project title: Collaborative Filtering on `Anonymous Microsoft Web` and `EachMovie` Data
++ Team Number: 7
++ Team Members: Jessica Zhang, Daniel Parker, Jiongjiong Li, Xiangyu Liu, Ginny Gao
 + Project summary: [a short summary] 
 
 Contribution statement: [default](doc/a_note_on_contributions.md) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement.
