@@ -133,5 +133,5 @@ gamma_inits <- arr[-1, ]
 start_time <- Sys.time()
 output <- EM(data, data_train, mu_inits, gamma_inits, c)
 end_time <- Sys.time()
-total_time <- end_time - start_time
-print(total_time)
+training_time <- end_time - start_time
+print(training_time)

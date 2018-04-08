@@ -70,7 +70,7 @@ prediction <- function(gamma, mu, matrixtest, matrixk, c) {
            byrow = TRUE)
   
   # Calculate upper
-  matrixsum<-matrix(rep(0,5055*1619),ncol=1619,nrow=5055)
+  matrixsum <- matrix(rep(0, 5055 * 1619), ncol = 1619, nrow = 5055)
   pp<-NULL
   for (i in 1:k) {
     data <- as.matrix(matrixtest)
@@ -104,7 +104,10 @@ prediction <- function(gamma, mu, matrixtest, matrixk, c) {
 
 # Generate prediction
 ```{r}
-r<-prediction(gamma_em_result,mu_em_result,test,data_test,9)
+start_time <- Sys.time()
+r <- prediction(gamma_em_result, mu_em_result, test, data_test, 9)
+end_time <- Sys.time()
+prediction_time <- end_time - start_time
 ```
 
 # Save prediction
