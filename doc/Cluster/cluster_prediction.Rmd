@@ -1,5 +1,6 @@
 # Read in data
 ```{r}
+# ~/Downloads/movie_train.csv" is the output of `cluster_data_clean_movie.Rmd`.
 data_train <- read.csv("~/Downloads/movie_train.csv")
 ```
 
@@ -14,6 +15,7 @@ colnames(data_train) <- 1:ncol(data_train)
 
 # Read test dataset
 ```{r}
+# "~/Downloads/movie_test_train_new.csv" is the output of `cluster_Train_Test_Data_Preprocessing.Rmd`.
 test <- read.csv("~/Downloads/movie_test_train_new.csv", header = TRUE)
 rownames(test) <- test[, 1]
 test <- test[, -1]
@@ -28,10 +30,10 @@ for (i in 1:6) {
 data_test <- data_test[, -1]
 ```
 
-# Load EM results
+# Load estimated parameter results from previous run of EM algorithm
 ```{r}
-load("/Users/djparker/Documents/GitHub/Fall2017-project4-grp8/output/gamma_em_result_9.RData")
-load("/Users/djparker/Documents/GitHub/Fall2017-project4-grp8/output/mu_em_result_9.RData")
+load("/Users/djparker/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/doc/Cluster/gamma_em_result_9.RData")
+load("/Users/djparker/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/doc/Cluster/mu_em_result_9.RData")
 ```
 
 # Define prediction function
