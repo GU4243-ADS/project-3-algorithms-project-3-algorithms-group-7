@@ -1,3 +1,5 @@
+This code is based on code from the ADS Fall 2017 Project 4 Group 8 GitHub respository, and contains modifications.
+
 # Load Data
 ```{r}
 setwd("/Users/djparker/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/doc/Cluster")

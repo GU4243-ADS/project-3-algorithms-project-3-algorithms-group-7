@@ -1,3 +1,5 @@
+This code is based on code from the ADS Fall 2017 Project 4 Group 8 GitHub respository, and contains modifications.
+
 # Read in train and test data
 ```{r}
 # ~/Downloads/movie_train.csv" is the output of `cluster_data_clean_movie.Rmd`.

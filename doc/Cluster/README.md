@@ -1,5 +1,7 @@
 # Cluster Model
 
+This code in the `.Rmd`s is based on code from the ADS Fall 2017 Project 4 Group 8 GitHub respository, and contains modifications. 
+
 1. Run `data_clean.Rmd`. This generates `movie_train.csv` in the `Downloads` folder.
 
 2. Run `train_test_data_preprocessing.Rmd`. This generates `movie_test.csv` and `movie_test_train_new.csv` in the `Downloads` folder.
