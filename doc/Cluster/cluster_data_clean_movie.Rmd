@@ -1,0 +1,18 @@
+# Read in data
+```{r}
+data_train <- read.csv("../data/eachmovie_sample/data_train.csv")
+```
+
+# Process
+```{r}
+movietrain = data_train[,-1]
+nrow_movie = length(unique(movietrain[,2]))
+ncol_movie = length(unique(movietrain[,1]))
+movie.train.matrix = matrix(NA, nrow = nrow_movie, ncol = ncol_movie)
+movie.train.matrix = reshape(movietrain, idvar = "User", timevar = "Movie", direction = "wide")
+```
+
+# Write matrix
+```{r}
+write.csv(movie.train.matrix,"~/Downloads/movie_train.csv", na="")
+```
