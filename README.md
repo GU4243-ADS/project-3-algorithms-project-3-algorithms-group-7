@@ -13,7 +13,7 @@ Term: Spring 2018
 + Project title: Collaborative Filtering on `Anonymous Microsoft Web` and `EachMovie` Data
 + Team Number: 7
 + Team Members: Jessica Zhang, Daniel Parker, Jiongjiong Li, Xiangyu Liu, Ginny Gao
-+ Project summary: We used 2 types of collaborative filtering algorithms: Memory-based and Model-based on 2 data sets, `Ananoymous Microsoft Web` for implicit rating, and `EachMovie` for explicit rating, to predict users' ratings on webpages or movies they have't rated, which indicates they might not know thesed items, and based on the ratings, these items could be good recommendations for them.
++ Project summary: We used 2 types of collaborative filtering algorithms: Memory-based and Model-based on 2 data sets, `Ananoymous Microsoft Web` for implicit rating, and `EachMovie` for explicit rating, to predict users' ratings on webpages or movies they have't rated, which indicates they might not know thesed items, and based on the ratings, these items could be good recommendations for them. Details can be found in [`main.R`](https://github.com/GU4243-ADS/project-3-algorithms-project-3-algorithms-group-7/blob/master/doc/main.R).
 
 Contribution statement:  
 
