@@ -168,3 +168,59 @@ pred_matrix <- function(data, simweights) {
   return(pred_mat)
 }
 
+
+
+
+
+
+pred_matrix_norm <- function(data, simweights) {
+  
+  ## Calculate normalized prediction matrix
+  ##
+  ## input: data   - movie data or MS data in user-item matrix form
+  ##        simweights - a matrix of similarity weights
+  ##
+  ## output: prediction matrix
+  
+  # Initiate the prediction matrix.
+  pred_mat <- data
+  
+  # Change MS entries from 0 to NA
+  pred_mat[pred_mat == 0] <- NA
+  
+  # Calculate average of the rows, less NA
+  row_avgs <- apply(data, 1, mean, na.rm = TRUE)
+  # Calculate standard deviation of the rows, less NA
+  row_sd <- apply(data, 1, sd, na.rm = TRUE)
+  
+  for(i in 1 : nrow(data)) {
+    
+    # Find columns we need to predict for user i
+    cols_to_predict <- which(is.na(pred_mat[i, ]))
+    num_cols        <- length(cols_to_predict)
+    # Find sim weights for user i
+    neighb_weights  <- simweights[i, ]
+    
+    # Transform the UI matrix into a deviation (from row means) matrix since we want to calculate
+    # weighted averages of the deviations
+    dev_mat     <- data - matrix(rep(row_avgs, ncol(data)), ncol = ncol(data))
+    zScore_mat  <- dev_mat/matrix(rep(row_sd, ncol(data)), ncol = ncol(data))
+    weight_mat  <- matrix(rep(neighb_weights, ncol(data)), ncol = ncol(data))
+
+    # Subsets withs columns to predict, which is ones with NAs
+    dev_sub    <- dev_mat[ ,cols_to_predict]
+    zScore_sub <- zScore_mat[, cols_to_predict]
+    weight_sub <- weight_mat[, cols_to_predict]
+    
+    pred_mat[i, cols_to_predict] <- row_avgs[i] +  apply(zScore_sub * weight_sub, 2, sum, na.rm = TRUE)/sum(neighb_weights, na.rm = TRUE)
+#    print(i)
+  }
+  
+  return(pred_mat)
+}
+
+
+
+
+
+
