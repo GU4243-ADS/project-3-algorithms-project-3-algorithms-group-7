@@ -19,7 +19,7 @@ Contribution statement:
 
 + Jessica Zhang: Model-based Algorithm, base + cross-validation.
 
-+ Daniel Parker: did not contribute to this project.
++ Daniel Parker: 
 
 + Jiongjiong Li: 
 
