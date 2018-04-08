@@ -1,40 +1,44 @@
-```{r}
 # Load Data
-setwd("/Users/djparker/Documents/GitHub/Fall2017-project4-grp8/doc/")
-load("../output/mv.test.matrix.Rdata")
-load("../output/mv.train.matrix.Rdata")
-data_test <- read.csv("../data/eachmovie_sample/data_test.csv")
-data_train <- read.csv("../data/eachmovie_sample/data_train.csv")
+```{r}
+setwd("/Users/djparker/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/doc/Cluster")
+load("mv.test.matrix.Rdata")
+load("mv.train.matrix.Rdata")
+
+# Original project data
+data_test <- read.csv("/Users/djparker/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/data/eachmovie_sample/data_test.csv")
+data_train <- read.csv("/Users/djparker/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/data/eachmovie_sample/data_train.csv")
 ```
 
+# Write test matrix
 ```{r}
-# Write TEST matrix
 movie.test.matrix = reshape(data_test, idvar = "User", timevar = "Movie", direction = "wide")
-write.csv(movie.test.matrix,"~/Downloads/movie_test.csv", na="")
-rownames(movie.test.matrix)<-movie.test.matrix[,1]
-movie.test.matrix<-movie.test.matrix[,-1]
-movie.test.col<-colnames(movie.test.matrix)
+write.csv(movie.test.matrix, "~/Downloads/movie_test.csv", na = "")
+rownames(movie.test.matrix) <- movie.test.matrix[, 1]
+movie.test.matrix <- movie.test.matrix[, -1]
+movie.test.col <- colnames(movie.test.matrix)
 ```
 
+# Write train matrix
 ```{r}
-# Write TRAIN matrix
-movietrain = data_train[,-1]
+movietrain = data_train[, -1]
 movie.train.matrix = reshape(movietrain, idvar = "User", timevar = "Movie", direction = "wide")
-rownames(movie.train.matrix)<-movie.train.matrix[,1]
-movie.train.matrix<-movie.train.matrix[,-1]
-movie.train.col<-colnames(movie.train.matrix)
+rownames(movie.train.matrix) <- movie.train.matrix[, 1]
+movie.train.matrix <- movie.train.matrix[, -1]
+movie.train.col <- colnames(movie.train.matrix)
 
-common<-intersect(movie.train.col,movie.test.col)
-train.col<-match(common,movie.train.col)
-test.col<-match(common,movie.test.col)
-new.matrix<-matrix(NA,nrow=nrow(movie.train.matrix),ncol=ncol(movie.train.matrix))
-for (i in 1:length(common)){
-  a<-train.col[i]
-  b<-test.col[i]
-  new.matrix[,a]<-movie.test.matrix[,b]
-  new.matrix[,i]
+common <- intersect(movie.train.col, movie.test.col)
+train.col <- match(common, movie.train.col)
+test.col <- match(common, movie.test.col)
+new.matrix <- matrix(NA,
+                     nrow = nrow(movie.train.matrix),
+                     ncol = ncol(movie.train.matrix))
+for (i in 1:length(common)) {
+  a <- train.col[i]
+  b <- test.col[i]
+  new.matrix[, a] <- movie.test.matrix[, b]
+  new.matrix[, i]
 }
-rownames(new.matrix)<-rownames(movie.train.matrix)
-colnames(new.matrix)<-colnames(movie.train.matrix)
-write.csv(new.matrix,"~/Downloads/movie_test_train_new.csv", na="")
+rownames(new.matrix) <- rownames(movie.train.matrix)
+colnames(new.matrix) <- colnames(movie.train.matrix)
+write.csv(new.matrix, "~/Downloads/movie_test_train_new.csv", na = "")
 ```

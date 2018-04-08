@@ -129,5 +129,9 @@ for (i in 1:c) {
 }
 gamma_inits <- arr[-1, ]
 
-### Return EM 
+### Return EM
+start_time <- Sys.time()
 output <- EM(data, data_train, mu_inits, gamma_inits, c)
+end_time <- Sys.time()
+total_time <- end_time - start_time
+print(total_time)

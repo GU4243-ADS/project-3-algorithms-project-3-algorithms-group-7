@@ -1,22 +1,22 @@
-# Read in data
+# Read in train and test data
 ```{r}
 # ~/Downloads/movie_train.csv" is the output of `cluster_data_clean_movie.Rmd`.
 data_train <- read.csv("~/Downloads/movie_train.csv")
+
+# "~/Downloads/movie_test_train_new.csv" is the output of `cluster_Train_Test_Data_Preprocessing.Rmd`.
+test <- read.csv("~/Downloads/movie_test_train_new.csv", header = TRUE)
 ```
 
-# Process again
+# Process to prepare for prediction function
 ```{r}
+# Train data processing
 data_train <- as.data.frame(data_train[, -1])
 data_train[is.na(data_train)] <- 0
 rownames(data_train) <- data_train[, 1]
 data_train <- as.data.frame(data_train[, -1])
 colnames(data_train) <- 1:ncol(data_train)
-```
 
-# Read test dataset
-```{r}
-# "~/Downloads/movie_test_train_new.csv" is the output of `cluster_Train_Test_Data_Preprocessing.Rmd`.
-test <- read.csv("~/Downloads/movie_test_train_new.csv", header = TRUE)
+# Test data processing
 rownames(test) <- test[, 1]
 test <- test[, -1]
 test[is.na(test)] <- 0
@@ -99,7 +99,7 @@ prediction <- function(gamma, mu, matrixtest, matrixk, c) {
   mm <- apply(pp, 2, which.max)
   result <- matrix(mm, ncol = ncol(matrixtest), byrow = TRUE)
   return(result)
-} # End of function
+}
 ```
 
 # Generate prediction
@@ -109,5 +109,5 @@ r<-prediction(gamma_em_result,mu_em_result,test,data_test,9)
 
 # Save prediction
 ```{r}
-write.csv(r, file = "~/Documents/GitHub/Fall2017-project4-grp8/output/predict.csv")
+write.csv(r, file = "~/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/doc/Cluster/predict.csv")
 ```

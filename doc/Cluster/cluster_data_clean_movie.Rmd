@@ -1,5 +1,6 @@
 # Read in data
 ```{r}
+# Original project data
 data_train <- read.csv("../data/eachmovie_sample/data_train.csv")
 ```
 
