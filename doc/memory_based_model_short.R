@@ -127,3 +127,80 @@ save(MS_pred, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-pro
 system.time(movie_pred <- pred_matrix(movie_UI, movie_sim))
 #object.size(movie_pred <- pred_matrix(movie_UI, movie_sim))
 save(movie_pred, file = "/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_pred.RData")
+
+
+
+###########################################################
+########                Evaluation                 ########
+###########################################################
+
+setwd("/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/lib")
+source("evaluation.R")
+
+
+# Evaluation on movie ratings (test vs pred)
+m_test_UI <- get(load('/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_UI_test.RData'))
+
+
+# Movie: Pearson
+m_pred_pearson <- get(load('/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_pred_pearson.RData'))
+m_pred_pearson <- m_pred_pearson[row.names(m_pred_pearson) %in% row.names(m_test_UI), colnames(m_pred_pearson) %in% colnames(m_test_UI)]
+
+# MAE
+mae(m_test_UI, m_pred_pearson)
+
+# ROC
+roc(m_test_UI, m_pred_pearson)
+
+
+# Movie: Spearman
+m_pred_spearman <- get(load('/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_pred_spearman.RData'))
+m_pred_spearman <- m_pred_spearman[row.names(m_pred_spearman) %in% row.names(m_test_UI), colnames(m_pred_spearman) %in% colnames(m_test_UI)]
+
+# MAE
+mae(m_test_UI, m_pred_spearman)
+
+# ROC
+roc(m_test_UI, m_pred_spearman)
+
+
+
+# Movie: Cosine (VS)
+m_pred_vs <- get(load('/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_pred_vs.RData'))
+m_pred_vs <- m_pred_vs[row.names(m_pred_vs) %in% row.names(m_test_UI), colnames(m_pred_vs) %in% colnames(m_test_UI)]
+
+# MAE
+mae(m_test_UI, m_pred_vs)
+
+# ROC
+roc(m_test_UI, m_pred_vs)
+
+
+# Movie: Entropy
+m_pred_entropy <- get(load('/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_pred_entropy.RData'))
+m_pred_entropy <- m_pred_entropy[row.names(m_pred_entropy) %in% row.names(m_test_UI), colnames(m_pred_entropy) %in% colnames(m_test_UI)]
+
+# MAE
+mae(m_test_UI, m_pred_entropy)
+
+# ROC
+roc(m_test_UI, m_pred_entropy)
+
+
+# Movie: MSD
+m_pred_msd <- get(load('/Users/qinqingao/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/output/movie_pred_msd.RData'))
+m_pred_msd <- m_pred_msd[row.names(m_pred_msd) %in% row.names(m_test_UI), colnames(m_pred_msd) %in% colnames(m_test_UI)]
+
+# MAE
+mae(m_test_UI, m_pred_msd)
+
+# ROC
+roc(m_test_UI, m_pred_msd)
+
+
+
+
+
+
+
+
