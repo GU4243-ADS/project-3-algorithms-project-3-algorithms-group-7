@@ -17,15 +17,19 @@ Term: Spring 2018
 
 Contribution statement:  
 
-+ Jessica Zhang:
++ Jessica Zhang: Model-based Algorithm, base + cross-validation.
 
-+ Daniel Parker: 
++ Daniel Parker: did not contribute to this project.
 
-+ Jiongjiong Li:
++ Jiongjiong Li: 
 
-+ Xiangyu Liu: 
++ Xiangyu Liu: Model-based Algorithm, base + evaluation.
 
 + Ginny Gao: explored different similiary weighting measures (Pearson, Spearman, Vector Similarity, Entropy, Mean Square Difference) in Memory-based model, and experimented on whether rating normalization (according to Paper 2, Sec 7) enhances model performance. Tested different similarity weights with normalization, compared different evaluatation metrics.
+
+
+# Model-based Algorithm - clustering
+
 
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
