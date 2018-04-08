@@ -1,0 +1,389 @@
+---
+title: "Model Algorithm"
+author: "Jessica Zhang, Daniel Parker"
+date: "4/9/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+require("knitr")
+opts_knit$set(root.dir = "~/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/data/eachmovie_sample")
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load Data
+```{r}
+setwd("~/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/data/eachmovie_sample")
+
+# Original project data
+data_test <- read.csv("~/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/data/eachmovie_sample/data_test.csv")
+data_train <- read.csv("~/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/data/eachmovie_sample/data_train.csv")
+```
+# Write train matrix
+```{r}
+movietrain = data_train[,-1]
+head(movietrain)
+nrow_movie = length(unique(movietrain[,2]))
+ncol_movie = length(unique(movietrain[,1]))
+movie.train.matrix = matrix(NA, nrow = nrow_movie, ncol = ncol_movie)
+movie.train.matrix = reshape(movietrain, idvar = "User", timevar = "Movie", direction = "wide")
+rownames(movie.train.matrix) <- movie.train.matrix[, 1]
+movie.train.matrix <- movie.train.matrix[, -1]
+movie.train.col <- colnames(movie.train.matrix)
+movie.train.matrix = movie.train.matrix[1:100,]
+head(movie.train.matrix)
+write.csv(movie.train.matrix, "../../output/movie_train.csv", na="")
+```
+# Write test matrix
+```{r}
+movie.test.matrix <- reshape(data_test, idvar = "User", timevar = "Movie", direction = "wide")
+movie.test.matrix = movie.test.matrix[1:100,] # DP: changed "movie.train.matrix[1:100]" to "movie.test.matrix[1:100]""
+rownames(movie.test.matrix) <- movie.test.matrix[, 1]
+movie.test.matrix <- movie.test.matrix[, -1]
+movie.test.col <- colnames(movie.test.matrix)
+write.csv(movie.test.matrix, "../../output/movie_test.csv", na = "")
+```
+# Write new matrix
+```{r}
+common <- intersect(movie.train.col, movie.test.col)
+train.col <- match(common, movie.train.col)
+test.col <- match(common, movie.test.col)
+new.matrix <- matrix(NA, nrow = nrow(movie.train.matrix), ncol = ncol(movie.train.matrix))
+for (i in 1:length(common)) {
+  a <- train.col[i]
+  b <- test.col[i]
+  new.matrix[, a] <- movie.test.matrix[, b]
+  new.matrix[, i]
+}
+rownames(new.matrix) <- rownames(movie.train.matrix)
+colnames(new.matrix) <- colnames(movie.train.matrix)
+write.csv(new.matrix, "../../output/movie_test_train_new.csv", na = "")
+```
+
+# Expectation
+```{r}
+expectation <- function(mu, gamma, matrixk, c) {
+  theta <- NULL
+  N <- nrow(matrixk)
+  for (i in 1:c) {
+    gamma_c <- gamma[((i - 1) * 6 + 1):(6 * i), ]
+    gamma_c <- as.vector(t(gamma_c))
+    gamma_c <- matrix(rep(gamma_c, each = N), nrow = N)
+    Di <- matrixk * gamma_c
+    theta_i <- apply(Di, 1, function(x) {
+      return(prod(x[x > 0]))
+    })
+    names(theta_i) <- NULL
+    theta <- rbind(theta, theta_i)
+  }
+  mu_repeat <- matrix(rep(mu, each = N), nrow = N)
+  upper <- t(mu_repeat) * theta
+  sum <- colSums(upper, na.rm = TRUE)
+  lower <- matrix(rep(sum, each = c), nrow = c)
+  pi <- upper / lower
+  pi[is.na(pi)] <- 10 ^ (-100)
+  return(pi)
+}
+```
+# Maximization
+```{r}
+maximization <- function(pi, matrixk, c) {
+  N <- ncol(matrixk)
+  # Estimate mu
+  mu <- rowSums(pi, na.rm = TRUE) / ncol(pi)
+  # Estimate gamma
+  summation <- rowSums(pi, na.rm = TRUE)
+  lower <- matrix(rep(summation, each = N), nrow = N)
+  gamma_temp <- NULL
+  for (k in 1:6) {
+    data <- as.matrix(matrixk)
+    data[data != k] <- 0
+    data[data == k] <- 1
+    upper <- pi %*% data
+    gamma_k <- upper / t(lower)
+    gamma_k <- as.vector(t(gamma_k))
+    gamma_temp <- rbind(gamma_temp, gamma_k)
+  } # End of gamma calculation for each k
+  gamma <- NULL
+  for (i in 1:c) {
+    temp <- gamma_temp[, ((i - 1) * N + 1):(i * N)]
+    gamma <- rbind(gamma, temp)
+  }
+  mu[is.na(mu)] <- 10 ^ (-100)
+  gamma[is.na(gamma)] <- 10 ^ (-100)
+  re <- list(mu, gamma)
+  return(re)
+}
+```
+# Expectation Maximization Algorithm
+```{r}
+EM <- function(data,matrixk, mu_inits, gamma_inits, c, maxit = 100, tol = 1e-5){
+    # Initial estimation of parameters
+    flag <- 0
+    mu_cur <- mu_inits
+    gamma_cur <- gamma_inits
+    
+    # Iterate between expectation and maximization steps
+    for (i in 1:maxit) {
+      step_num_message <- paste("Current step number:", i)
+      print(step_num_message)
+      cur <- c(mu_cur, gamma_cur)
+      new <- maximization(expectation(mu_cur, gamma_cur, data, c), matrixk, c)
+      mu_new <- new[[1]]
+      gamma_new <- new[[2]]
+      new_step <- c(mu_new, gamma_new)
+      
+      # Stop iteration if the difference between current and 
+      # new estimates is less than a tolerance level
+      if (all(abs(cur - new_step) < tol)) {
+        flag <- 1
+        terminate_message <- paste("Iteration number", i, "parameter change is below tolerance level. Algorithm terminated.")
+        print(terminate_message)
+        break
+      }
+      
+      # Otherwise, continue iteration
+      mu_cur <- mu_new
+      gamma_cur <- gamma_new
+    }
+    if (!flag)
+      warning("Parameter estimations did not converge within maximum iteration limit. Algorithm terminated without output.\n")
+    
+    em <- list(mu_cur, gamma_cur)
+    return(em)
+  }
+```
+# Load and process train data
+```{r}
+data_train1 <- as.data.frame(data_train[, -1])
+data_train1[is.na(data_train1)] <- 0
+data_train1 <- data_train1[1:100,]
+rownames(data_train1) <- data_train1[,1]
+data_train1 <- as.data.frame(data_train1[, -1])
+movie.index1 <- substring(names(data_train1), 7)
+colnames(data_train1) <- 1:ncol(data_train1)
+# Construct a binary matrix for users & moives
+data <- rep(NA, nrow(data_train1))
+for (i in 1:6) {
+  dat <- data_train1
+  dat[dat == i] <- 1
+  dat[dat != i] <- 0
+  data <- cbind(data, dat)
+}
+data <- data[, -1]
+```
+# Choose parameters
+```{r}
+# Set cluster number
+c <- 9
+# Initialize randomized starting values for mu and gamma
+# Mu
+rand_mu <- runif(c, min = 0, max = 1)
+mu_inits <- rand_mu / sum(rand_mu)
+# Gamma
+rand <- runif(c * 6 * ncol(data_train1), min = 0, max = 1)
+ar <- array(rand, dim = c(c,  ncol(data_train1), 6))
+arr <- matrix(rep(NA, ncol(data_train1)), ncol = ncol(data_train1), nrow = 1)
+for (i in 1:c) {
+  arr_i <- t(ar[i, , ] / rowSums(ar[i, , ]))
+  arr <- rbind(arr, arr_i)
+}
+gamma_inits <- arr[-1, ]
+```
+# Train Function - Run EM (time-intensive)
+```{r}
+start_time <- Sys.time()
+train_output <- EM(data, data_train1, mu_inits, gamma_inits, c)
+end_time <- Sys.time()
+training_time <- end_time - start_time
+print(training_time)
+train_output
+mu_em_result <- train_output[1]
+gamma_em_result <- train_output[2]
+```
+
+# Read in train and test data
+```{r}
+test <- read.csv("../output/movie_test_train_new.csv", header = TRUE)
+```
+# Process to prepare for prediction function
+```{r}
+# Test data processing
+rownames(test) <- test[, 1]
+test <- test[, -1]
+test[is.na(test)] <- 0
+data_test <- rep(NA, nrow(test))
+for (i in 1:6) {
+  dat_test <- test
+  dat_test[dat_test == i] <- 1
+  dat_test[dat_test != i] <- 0
+  data_test <- cbind(data_test, dat_test)
+}
+data_test <- data_test[, -1]
+```
+
+# Define prediction function
+```{r}
+prediction <- function(gamma, mu, matrixtest, matrixk, c) {
+  gamma <- gamma_em_result
+  mu <- mu_em_result
+  matrixtest <- test
+  matrixk <- data_test
+  c <- 9
+  k <- 6
+  theta <- NULL
+  N <- nrow(data_train)
+  for (i in 1:c) {
+    gamma_c <- gamma[((i - 1) * 6 + 1):(6 * i), ]
+    gamma_c <- as.vector(t(gamma_c))
+    gamma_c <- matrix(rep(gamma_c, each = N), nrow = N)
+    Di <- matrixk * gamma_c
+    theta_i <- apply(Di, 1, function(x) {
+    return(prod(x[x > 0]))
+    })
+    names(theta_i) <- NULL
+    theta <- rbind(theta, theta_i)
+    print(i)
+  }
+  
+  # Calculate lower
+  mu_repeat <- matrix(rep(mu, each = N), nrow = N)
+  prodre <- t(mu_repeat) * theta
+  sum <- colSums(prodre, na.rm = TRUE)
+  lower <-
+    matrix(rep(sum, each = ncol(matrixtest)), 
+           ncol = ncol(matrixtest),
+           byrow = TRUE)
+  
+  # Calculate upper
+  matrixsum <- matrix(rep(0, 5055 * 1619), ncol = 1619, nrow = 5055)
+  pp<-NULL
+  for (i in 1:k) {
+    data <- as.matrix(matrixtest)
+    data[data != i] <- 0
+    data[data == i] <- 1 
+    for (j in 1:c) {
+      mu_iter <- mu[j]
+      theta_iter <- theta[j, ]
+      theta_iter <-
+        matrix(rep(t(theta_iter), each = ncol(matrixtest)),
+               ncol = ncol(matrixtest),
+               byrow = TRUE)
+      gamma_iter <- gamma[(6 * (j - 1) + i), ]
+      gamma_me <- matrix(rep(gamma_iter, each = N), nrow = N)
+      prob <- data * gamma_me
+      prob <- mu_iter * prob
+      prob <- prob * theta_iter
+      matrixsum <- matrixsum + prob
+      pp_k <- matrixsum / lower
+      pp_k <- t(as.vector(t(pp_k)))
+      print(j)
+    } # End of c interaction
+    pp <- rbind(pp, pp_k)
+    print(i)
+  } # End of k interaction
+  mm <- apply(pp, 2, which.max)
+  result <- matrix(mm, ncol = ncol(matrixtest), byrow = TRUE)
+  return(result)
+}
+```
+
+# Load estimated parameter results from previous run of EM algorithm
+```{r}
+load("../../output/gamma_em_result_9.RData")
+load("../../output/mu_em_result_9.RData")
+```
+
+# Generate prediction
+```{r}
+start_time <- Sys.time()
+prediction_output <- prediction(gamma_em_result, mu_em_result, test, data_test, 9)
+end_time <- Sys.time()
+prediction_time <- end_time - start_time
+```
+# Save prediction
+```{r}
+write.csv(prediction_output, file = "../../output/predict.csv")
+```
+
+
+## Cross-validation
+```{r}
+#compute ranking scores
+rank_score<-function(test,prediction,alpha=5,d=0){
+  
+  #making sure the prediction and test set has the same dimensions
+  prediction<-prediction[row.names(prediction)%in%row.names(test),colnames(prediction)%in%colnames(test)]
+  nrow<-nrow(test)
+  ncol<-ncol(test)
+  rank_mat<-matrix(NA,nrow = nrow(prediction),ncol=ncol(prediction))
+  
+  # sort pred values
+  rank_pred<-t(apply(prediction,1,function(x){return(names(sort(x, decreasing = T)))}))
+  
+  # sort observed values based on pred values
+  for(i in 1:nrow(prediction)){
+    rank_mat[i,]<-unname(test[i,][rank_pred[i,]])
+  }
+  row.names(rank_mat)<-row.names(prediction)
+  #rank_pred<-data.frame(rank_pred2,row.names = row.names(prediction))
+  
+  rank_test<-t(apply(test, 1, sort,decreasing=T))
+  vec<-2^(0:(ncol(prediction)-1)/(alpha-1))
+  div<-matrix(rep(vec, nrow), nrow, ncol, byrow=T)
+  
+  tmp<-ifelse(rank_mat-d>0,rank_mat-d,0)
+  #R_a formula
+  R_a<-rowSums(tmp/div)
+  #R_a_max formula
+  R<-rowSums(rank_test/div)
+  # the final score
+  return(100*sum(R_a)/sum(R))
+}
+
+# Choose the range of best cluster numbers
+bc <- 2:10
+
+cv.accuracy<- c()
+for (i in 1:length(bc)) {
+  coef = EM(training_data, bc[i])
+  EM_predict = prediction(validation_data, coef)
+  cv.accuracy[i] <- rank_score(validation_data, EM_predict)
+}
+
+# observe the best parameter from the graph
+plot(bc,cv.accuracy,type="b")
+
+# use the best class number to calculate the accuracy of the model
+best.C = 123*
+best.coef <- EM(data_train1,C=best.C)
+best.pred <- prediction(best.coef[1], best.coef[2],test, C=best.C)
+best.accuracy <- rank_score(test,best.pred)
+```
+
+
+# optional graphs 
+```{r}
+library(ggplot2)
+library(reshape2)
+movie_eva_results = data.frame(movie_eva_results)
+#movie MAE
+ggplot(data=movie_eva_results, aes(x=as.factor(weights), y=mae, group = methods, colour = methods)) +
+    geom_line() +
+    geom_point( size=4, shape=21, fill="white") + labs(x = 'Weights', y = 'MAE') + ggtitle('MAE FOR MOVIE')
+#movie ROC
+ggplot(data=movie_eva_results, aes(x=as.factor(weights), y=roc, group = methods, colour = methods)) +
+    geom_line() +
+    geom_point( size=4, shape=21, fill="white") + labs(x = 'Weights', y = 'MAE') + ggtitle('ROC FOR MOVIE')
+# ms RANK SCORE
+ms_eva_results = data.frame(ms_eva_results)
+ggplot(data=ms_eva_results, aes(x=as.factor(weights1), y=rank.score, group = methods1, colour = methods1)) +
+    geom_line() +
+    geom_point( size=4, shape=21, fill="white") + labs( x = 'Weights',y = 'Rank Score')+ ggtitle('RANK SCORE FOR MS')
+
+#CLUSTER NUMBER COMPARISON
+cluster = data.frame(matrix(c(2,3,5,8,41.56,41.10,38.84,38.10),ncol = 2))
+ggplot(cluster, aes(x=X1, y=X2)) + geom_line(col = 'pink') +geom_point( size=4, shape=21, fill="white") +
+  labs( x = 'Cluster Number',y = 'Rank Score')+ ggtitle('RANK SCORE FOR CLUSTER MODEL')
+
+```

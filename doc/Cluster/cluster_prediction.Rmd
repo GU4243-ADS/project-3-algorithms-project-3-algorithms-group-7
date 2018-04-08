@@ -1,12 +1,89 @@
+---
+title: "Cluster Prediction"
+author: "Daniel Parker"
+date: "4/8/2018"
+output: html_document
+---
+
+```{r "setup", include=FALSE}
+require("knitr")
+opts_knit$set(root.dir = "~/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/doc")
+```
+
 This code is based on code from the ADS Fall 2017 Project 4 Group 8 GitHub respository, and contains modifications.
 
+# Data Clean
+## Read in data
+```{r}
+# Original project data
+data_train <- read.csv("../data/eachmovie_sample/data_train.csv")
+```
+## Process
+```{r}
+movietrain = data_train[,-1]
+nrow_movie = length(unique(movietrain[,2]))
+ncol_movie = length(unique(movietrain[,1]))
+movie.train.matrix = matrix(NA, nrow = nrow_movie, ncol = ncol_movie)
+movie.train.matrix = reshape(movietrain, idvar = "User", timevar = "Movie", direction = "wide")
+```
+## Write matrix
+```{r}
+write.csv(movie.train.matrix,"../output/movie_train.csv", na="")
+```
+
+# Preprocessing
+## Load Data
+```{r}
+load("../output/mv.test.matrix.Rdata")
+load("../output/mv.train.matrix.Rdata")
+
+# Original project data
+data_test <- read.csv("../data/eachmovie_sample/data_test.csv")
+data_train <- read.csv("../data/eachmovie_sample/data_train.csv")
+```
+## Write test matrix
+```{r}
+movie.test.matrix = reshape(data_test, idvar = "User", timevar = "Movie", direction = "wide")
+write.csv(movie.test.matrix, "../output/movie_test.csv", na = "")
+rownames(movie.test.matrix) <- movie.test.matrix[, 1]
+movie.test.matrix <- movie.test.matrix[, -1]
+movie.test.col <- colnames(movie.test.matrix)
+```
+## Write train matrix
+```{r}
+movietrain = data_train[, -1]
+movie.train.matrix = reshape(movietrain, idvar = "User", timevar = "Movie", direction = "wide")
+rownames(movie.train.matrix) <- movie.train.matrix[, 1]
+movie.train.matrix <- movie.train.matrix[, -1]
+movie.train.col <- colnames(movie.train.matrix)
+
+common <- intersect(movie.train.col, movie.test.col)
+train.col <- match(common, movie.train.col)
+test.col <- match(common, movie.test.col)
+new.matrix <- matrix(NA,
+                     nrow = nrow(movie.train.matrix),
+                     ncol = ncol(movie.train.matrix))
+for (i in 1:length(common)) {
+  a <- train.col[i]
+  b <- test.col[i]
+  new.matrix[, a] <- movie.test.matrix[, b]
+  new.matrix[, i]
+}
+rownames(new.matrix) <- rownames(movie.train.matrix)
+colnames(new.matrix) <- colnames(movie.train.matrix)
+write.csv(new.matrix, "../output/movie_test_train_new.csv", na = "")
+```
+
+# EM Algorithm: included in `em.Rmd`
+
+# Prediction
 # Read in train and test data
 ```{r}
-# ~/Downloads/movie_train.csv" is the output of `cluster_data_clean_movie.Rmd`.
-data_train <- read.csv("~/Downloads/movie_train.csv")
+# ~/Downloads/movie_train.csv" is the output of `data_clean.Rmd`.
+data_train <- read.csv("../output/movie_train.csv")
 
-# "~/Downloads/movie_test_train_new.csv" is the output of `cluster_Train_Test_Data_Preprocessing.Rmd`.
-test <- read.csv("~/Downloads/movie_test_train_new.csv", header = TRUE)
+# "~/Downloads/movie_test_train_new.csv" is the output of `train_test_data_preprocessing.Rmd`.
+test <- read.csv("../output/movie_test_train_new.csv", header = TRUE)
 ```
 
 # Process to prepare for prediction function
@@ -34,8 +111,8 @@ data_test <- data_test[, -1]
 
 # Load estimated parameter results from previous run of EM algorithm
 ```{r}
-load("/Users/djparker/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/doc/Cluster/gamma_em_result_9.RData")
-load("/Users/djparker/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/doc/Cluster/mu_em_result_9.RData")
+load("../output/gamma_em_result_9.RData")
+load("../output/mu_em_result_9.RData")
 ```
 
 # Define prediction function
@@ -75,10 +152,14 @@ prediction <- function(gamma, mu, matrixtest, matrixk, c) {
   matrixsum <- matrix(rep(0, 5055 * 1619), ncol = 1619, nrow = 5055)
   pp<-NULL
   for (i in 1:k) {
+    k_val_message <- paste("k value:", i)
+    print(k_val_message)
     data <- as.matrix(matrixtest)
     data[data != i] <- 0
     data[data == i] <- 1 
     for (j in 1:c) {
+      c_val_message <- paste("c value:", j)
+      print(c_val_message)
       mu_iter <- mu[j]
       theta_iter <- theta[j, ]
       theta_iter <-
@@ -110,9 +191,10 @@ start_time <- Sys.time()
 r <- prediction(gamma_em_result, mu_em_result, test, data_test, 9)
 end_time <- Sys.time()
 prediction_time <- end_time - start_time
+print(prediction_time)
 ```
 
 # Save prediction
 ```{r}
-write.csv(r, file = "~/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-7/doc/Cluster/predict.csv")
+write.csv(r, file = "../output/predict.csv")
 ```
