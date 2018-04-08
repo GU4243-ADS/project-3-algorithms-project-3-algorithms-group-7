@@ -1,4 +1,5 @@
-### Expection Step ###
+# Expectation
+```{r}
 expectation <- function(mu, gamma, matrixk, c) {
   theta <- NULL
   N <- nrow(matrixk)
@@ -21,8 +22,10 @@ expectation <- function(mu, gamma, matrixk, c) {
   pi[is.na(pi)] <- 10 ^ (-100)
   return(pi)
 }
+```
 
-### Maximization Step ###
+# Maximization
+```{r}
 maximization <- function(pi, matrixk, c) {
   N <- ncol(matrixk)
   # Estimate mu
@@ -50,8 +53,10 @@ maximization <- function(pi, matrixk, c) {
   re <- list(mu, gamma)
   return(re)
 }
+```
 
-### Expectation Maximization Algorithm ###
+# Expectation Maximization Algorithm
+```{r}
 EM <-
   function(data,
            matrixk,
@@ -91,8 +96,10 @@ EM <-
     em <- list(mu_cur, gamma_cur)
     return(em)
   }
+```
 
-### Train data ###
+# Load and process train data
+```{r}
 # ~/Downloads/movie_train.csv" is the output of `cluster_data_clean_movie.Rmd`.
 data_train <- read.csv("~/Downloads/movie_train.csv")
 data_train <- as.data.frame(data_train[, -1])
@@ -111,11 +118,14 @@ for (i in 1:6) {
   data <- cbind(data, dat)
 }
 data <- data[, -1]
+```
 
-### Set cluster number ###
+# Choose parameters
+```{r}
+# Set cluster number
 c <- 9
 
-### Initialize randomized starting values for mu and gamma ###
+# Initialize randomized starting values for mu and gamma
 # Mu
 rand_mu <- runif(c, min = 0, max = 1)
 mu_inits <- rand_mu / sum(rand_mu)
@@ -128,10 +138,13 @@ for (i in 1:c) {
   arr <- rbind(arr, arr_i)
 }
 gamma_inits <- arr[-1, ]
+```
 
-### Return EM
+# Run EM (time-intensive)
+```{r}
 start_time <- Sys.time()
 output <- EM(data, data_train, mu_inits, gamma_inits, c)
 end_time <- Sys.time()
 training_time <- end_time - start_time
 print(training_time)
+```
