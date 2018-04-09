@@ -181,3 +181,156 @@ mae(m_test_UI, m_pred_msd)
 roc(m_test_UI, m_pred_msd)
 
 
+###################################################################
+###     Model-based Collaborative Filtering Algorithm Code     ###
+###################################################################
+
+########################################################
+###### Building the EM Algorithm for the MS Data ######
+########################################################
+
+EM_train <- function(train, C = 3, tau = 0.04, limit_iter = 150){
+  
+  nuser <- nrow(train)
+  nwebs <- ncol(train)
+  #initialization
+  mu <- rep(1/C, C)
+  # create a matrix to store the probabilities
+  # we consider it is uniform distribution and store it in the matrix
+  gamma1 = matrix(0.5,nwebs,C)
+  gamma2 = matrix(0.5,nwebs,C)
+  gamma <- array(NA,c(2,nwebs,C))
+  gamma[1,,] <- gamma1
+  gamma[2,,] <- gamma2
+  
+  # Expectation step
+  # matrix generation
+  numerator <- matrix(NA, nrow = nuser, ncol = C)
+  # assign matrix
+  assign_m <- matrix(NA, nrow = nuser, ncol = C)
+  # probability
+  qi <- matrix(0, nrow = nuser, ncol = C)
+  flag <- 1
+  count <- 1
+  while(flag==1 & count < limit_iter){
+    # compute fractional count
+    for(i in 1:nuser){ 
+      mid_value <- rep(0,C)
+      for(j in 1:nwebs) {
+        if(train[i,j]<1){
+          mid_value <- mid_value + log(gamma[1,j,])
+        }
+        else{
+          mid_value <- mid_value + log(gamma[2,j,])
+        }
+      }
+      numerator[i, ] <- exp(mid_value)
+    }
+    tmp <- mu * numerator
+    assign_m <- tmp/apply(tmp, 1, sum)
+    
+    # Maximization
+    mu <- apply(assign_m, 2, sum)/nuser
+    for(i in 1:C){ 
+      for(j in 1:nwebs){
+        gamma[2,j,i] <- (assign_m[, i] %*% train[, j]/sum(assign_m[ ,i]))
+        gamma[1,j,i]<-1-gamma[2,j,i]
+      }
+    }
+    if ((norm(assign_m - qi))<=tau){
+      flag=0
+    }
+    qi <- assign_m
+    count<-count+1
+  }
+  return(list("assign_m" = assign_m, "gamma" = gamma))
+}  
+
+# Prediction function
+EM_predict <- function(train,assign_m,gamma){
+  pred_mat <- train
+  pred_mat[pred_mat == 0] <- NA
+  for(i in 1:nrow(train)) {
+  cols_to_predict <- as.vector(which(is.na(pred_mat[i, ])))
+  num_cols        <- length(cols_to_predict)
+  for(j in cols_to_predict){
+    tmp <- assign_m[i,]*gamma[1,j,]
+    pred_mat[i,j] <- sum(tmp)
+  }
+  }
+  return(pred_mat)
+}
+
+# result
+train_result <- EM_train(MS_train)
+mu <- train_result$assign_m
+gamma <- train_result$gamma
+pred_mat <- EM_predict(MS_train, assign_m = mu,gamma = gamma)
+
+
+###################################################
+######## Cross Validation for the MS Data ########
+###################################################
+
+# Separate the training data
+dl = nrow(train_data)
+vl = dl/2
+validation_data = train_data[1:vl,]
+train_data = train_data[(vl+1):dl,]
+
+rank_score<-function(test,prediction,alpha=5,d=0){
+  #making sure the prediction and test set has the same dimensions
+  prediction<-prediction[row.names(prediction)%in%row.names(test),colnames(prediction)%in%colnames(test)]
+  nrow<-nrow(test)
+  ncol<-ncol(test)
+  rank_mat<-matrix(NA,nrow = nrow(prediction),ncol=ncol(prediction))
+  # sort pred values
+  rank_pred<-t(apply(prediction,1,function(x){return(names(sort(x, decreasing = T)))}))
+  # sort observed values based on pred values
+  for(i in 1:nrow(prediction)){
+    rank_mat[i,]<-unname(test[i,][rank_pred[i,]])
+  }
+  row.names(rank_mat) <- row.names(prediction)
+  #rank_pred<-data.frame(rank_pred2,row.names = row.names(prediction))
+  
+  rank_test<-t(apply(test, 1, sort,decreasing=T))
+  vec<-2^(0:(ncol(prediction)-1)/(alpha-1))
+  div<-matrix(rep(vec, nrow), nrow, ncol, byrow=T)
+  
+  tmp<-ifelse(rank_mat-d>0,rank_mat-d,0)
+  #R_a formula
+  R_a<-rowSums(tmp/div)
+  #R_a_max formula
+  R<-rowSums(rank_test/div)
+  # the final score
+  return(100*sum(R_a)/sum(R))
+}
+
+# Choose the range of best cluster numbers
+bc <- c(2,6,8,10)
+
+cv.accuracy<- c()
+for (i in 1:length(bc)) {
+  cluster_train = train_func(train_data, C=bc[i])
+  gamma1 <- cluster_train$gamma
+  mu1 <- cluster_train$mu
+  pi1 <- cluster_train$pi
+  items1 <- cluster_train$items
+  cluster_pred = pred_func(validation_data, gamma1, mu1, pi1, items1)
+  cv.accuracy[i] <- rank_score(cluster_pred, validation_data, d=0, alpha=10)
+}
+
+# observe the best parameter from the graph
+plot(bc,cv.accuracy,type="b")
+best_C = 6
+
+# Test Error
+best_para <- train_func(train_data, C = best_C)
+gamma2 <- best_para$gamma
+mu2 <- best_para$mu
+pi2 <- best_para$pi
+items2 <- best_para$items
+best_pred <- pred_func(test_data, gamma2, mu2, pi2, items2)
+accuracy1 <- sum(best_pred)/sum(test_data)
+best_rank_score <- rank_score(best_pred,test_data,d=0,alpha=10)
+best_rank_score
