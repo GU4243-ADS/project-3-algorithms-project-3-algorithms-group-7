@@ -21,17 +21,15 @@ In the memory-based algorithm: First, we computed different similarity weightsï¼
 
 Model-based Algorithm - clustering:
 
-In the model-based algorithm, 
-
-
+In the model-based algorithm: First, we wrote the EM Algorithm. Then, we estimated parameters of model using training data. After that, we carried out the cross-validation to choose number of classes. Finally, we made the evaluations.
 
 Contribution statement:  
 
 - Jessica Zhang: Model-based Algorithm, base + cross-validation.
 
-- Jiongjiong Li: 
+- Jiongjiong Li: Model-based algorithm, wrote the MAE, ROC, ranking score function, code sum up
 
-- Xiangyu Liu: Memory-based Algorithm, simrank, base + evaluation.
+- Xiangyu Liu: Memory-based Algorithm, explored Mean Square Difference weights, simrank weigths, normalization on different data sets. Predicted the final ratings of each. Also tested Mean Square Difference weights with normalization and compared the performance. base + evaluation. 
 
 - Ginny Gao: explored different similiary weighting measures (Pearson, Spearman, Vector Similarity, Entropy, Mean Square Difference) in Memory-based model, and experimented on whether rating normalization (according to Paper 2, Sec 7) enhances model performance. Tested different similarity weights with normalization, compared different evaluatation metrics.
 
