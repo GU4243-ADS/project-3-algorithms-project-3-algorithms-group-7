@@ -17,9 +17,11 @@ Term: Spring 2018
 
 Memory-based Algorithm:
 
-For Microsft data, model performance from using different similarity weights is very close, with Vector Similarity (Cosine Similarity) slightly tops the rank score. Pearson takes least amount of time to run. After using rating normalization, Vector Similarity tops the rank score again and uses least amount of time.
+In the memory-based algorithm: First, we computed different similarity weights，including Spearman's correlation, vector similarity, entropy, mean-square difference and SimRank. Then, we applied normalization on their weights. Last, we predicted ratings on the training data set. For Microsft data, model performance from using different similarity weights is very close, with Vector Similarity (Cosine Similarity) slightly tops the rank score. Pearson takes least amount of time to run. After using rating normalization, Vector Similarity tops the rank score again and uses least amount of time.
 
 Model-based Algorithm - clustering:
+
+In the model-based algorithm, 
 
 
 
