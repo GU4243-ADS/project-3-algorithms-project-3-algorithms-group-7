@@ -11,7 +11,7 @@
 ######## Building the UI matrix for the MS Data ########
 ########################################################
 
-packages.used <- c('lsa', 'infotheo')
+packages.used <- c('lsa', 'infotheo','pROC','matrixStats')
 
 # check packages that need to be installed.
 packages.needed <- setdiff(packages.used, intersect(installed.packages()[,1], packages.used))
@@ -190,73 +190,83 @@ roc(m_test_UI, m_pred_msd)
 ########################################################
 
 EM_train <- function(train, C = 3, tau = 0.04, limit_iter = 150){
-  
+  #require package"matrixStats"
+  library("matrixStats")
+  data<-train
+  test[train == 0] <- NA
   nuser <- nrow(train)
   nwebs <- ncol(train)
   #initialization
   mu <- rep(1/C, C)
   # create a matrix to store the probabilities
-  # we consider it is uniform distribution and store it in the matrix
-  gamma1 = matrix(0.5,nwebs,C)
-  gamma2 = matrix(0.5,nwebs,C)
-  gamma <- array(NA,c(2,nwebs,C))
-  gamma[1,,] <- gamma1
-  gamma[2,,] <- gamma2
-  
-  # Expectation step
-  # matrix generation
-  numerator <- matrix(NA, nrow = nuser, ncol = C)
-  # assign matrix
+  gamma1=matrix(0.5,nwebs,C)
+  gamma2=matrix(0.5,nwebs,C)
+  gamma<-array(NA,c(2,nwebs,C))
+  gamma[1,,]<-gamma1
+  gamma[2,,]<-gamma2
+  #Expectation step
+  #matrix generation
+  #assign matrix
   assign_m <- matrix(NA, nrow = nuser, ncol = C)
-  # probability
+  #probability
   qi <- matrix(0, nrow = nuser, ncol = C)
-  flag <- 1
+  flag<-1
   count <- 1
-  while(flag==1 & count < limit_iter){
-    # compute fractional count
+while(flag==1 & count < limit_iter){
+    #compute fractional count
     for(i in 1:nuser){ 
-      mid_value <- rep(0,C)
-      for(j in 1:nwebs) {
-        if(train[i,j]<1){
-          mid_value <- mid_value + log(gamma[1,j,])
-        }
-        else{
-          mid_value <- mid_value + log(gamma[2,j,])
+      #find webs which users vote
+      ms_observe<-as.vector(which(!is.na(train[i, ])))
+      #because vote can only be 1
+      vote<-rep(1,length(ms_observe))
+      gamma_multi<-matrix(NA,C,length(ms_observe))
+      for(j in 1:C) {
+        for(m in 1:length(ms_observe)){
+          gamma_multi[j,m]<-gamma[vote[m]+1,ms_observe[m],j]
         }
       }
-      numerator[i, ] <- exp(mid_value)
-    }
-    tmp <- mu * numerator
-    assign_m <- tmp/apply(tmp, 1, sum)
+      #print(i)
+      #print("gamma_multi")
+      #print(gamma_multi)
+      #we get the numerator for assignment matrix
+      numerator<-rowProds(gamma_multi) * mu
+      #print("numerator")
+      #print(numerator)
+      denominator<-sum(numerator)
+      assign_m[i,]<-numerator/denominator
+      }
     
-    # Maximization
+
+    #Maximization
     mu <- apply(assign_m, 2, sum)/nuser
+    #since 0 multiplies anything is zero, we can just use the original data
     for(i in 1:C){ 
       for(j in 1:nwebs){
-        gamma[2,j,i] <- (assign_m[, i] %*% train[, j]/sum(assign_m[ ,i]))
-        gamma[1,j,i]<-1-gamma[2,j,i]
+        gamma[1,j,i] <- 1-(sum(assign_m[, i] * as.vector(data[, j]))/sum(assign_m[ ,i]))
+
       }
     }
+    
+    gamma[2,,]<-1-gamma[1,,]
     if ((norm(assign_m - qi))<=tau){
       flag=0
     }
     qi <- assign_m
     count<-count+1
-  }
   return(list("assign_m" = assign_m, "gamma" = gamma))
 }  
+}
 
-# Prediction function
-EM_predict <- function(train,assign_m,gamma){
-  pred_mat <- train
+EM_predict<-function(train,assign_m,gamma){
+  pred_mat<-train
   pred_mat[pred_mat == 0] <- NA
   for(i in 1:nrow(train)) {
-  cols_to_predict <- as.vector(which(is.na(pred_mat[i, ])))
-  num_cols        <- length(cols_to_predict)
-  for(j in cols_to_predict){
-    tmp <- assign_m[i,]*gamma[1,j,]
-    pred_mat[i,j] <- sum(tmp)
-  }
+    cols_to_predict <- as.vector(which(is.na(pred_mat[i, ])))
+    num_cols        <- length(cols_to_predict)
+    for(j in cols_to_predict){
+      tmp<-assign_m[i,]*gamma[1,j,]
+      pred_mat[i,j]<-sum(tmp)
+    }
   }
   return(pred_mat)
 }
