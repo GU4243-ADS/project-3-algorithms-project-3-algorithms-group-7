@@ -261,24 +261,17 @@ EM_predict <- function(train,assign_m,gamma){
   return(pred_mat)
 }
 
-# result
-train_result <- EM_train(MS_train)
-mu <- train_result$assign_m
-gamma <- train_result$gamma
-pred_mat <- EM_predict(MS_train, assign_m = mu,gamma = gamma)
-
-
 ###################################################
 ######## Cross Validation for the MS Data ########
 ###################################################
 
 # Separate the training data
-dl = nrow(train_data)
+dl = nrow(MS_UI)
 vl = dl/2
 validation_data = train_data[1:vl,]
 train_data = train_data[(vl+1):dl,]
 
-rank_score<-function(test,prediction,alpha=5,d=0){
+rank_score <- function(test,prediction,alpha=5,d=0){
   #making sure the prediction and test set has the same dimensions
   prediction<-prediction[row.names(prediction)%in%row.names(test),colnames(prediction)%in%colnames(test)]
   nrow<-nrow(test)
@@ -311,12 +304,12 @@ bc <- c(2,6,8,10)
 
 cv.accuracy<- c()
 for (i in 1:length(bc)) {
-  cluster_train = train_func(train_data, C=bc[i])
+  cluster_train = EM_train(train_data, C=bc[i])
   gamma1 <- cluster_train$gamma
   mu1 <- cluster_train$mu
   pi1 <- cluster_train$pi
   items1 <- cluster_train$items
-  cluster_pred = pred_func(validation_data, gamma1, mu1, pi1, items1)
+  cluster_pred = EM_predict(validation_data, gamma1, mu1, pi1, items1)
   cv.accuracy[i] <- rank_score(cluster_pred, validation_data, d=0, alpha=10)
 }
 
@@ -325,12 +318,12 @@ plot(bc,cv.accuracy,type="b")
 best_C = 6
 
 # Test Error
-best_para <- train_func(train_data, C = best_C)
+best_para <- EM_train(train_data, C = best_C)
 gamma2 <- best_para$gamma
 mu2 <- best_para$mu
 pi2 <- best_para$pi
 items2 <- best_para$items
-best_pred <- pred_func(test_data, gamma2, mu2, pi2, items2)
-accuracy1 <- sum(best_pred)/sum(test_data)
-best_rank_score <- rank_score(best_pred,test_data,d=0,alpha=10)
+best_pred <- EM_predict(w_test_UI, gamma2, mu2, pi2, items2)
+accuracy1 <- sum(best_pred)/sum(w_test_UI)
+best_rank_score <- rank_score(best_pred,w_test_UI,d=0,alpha=10)
 best_rank_score
