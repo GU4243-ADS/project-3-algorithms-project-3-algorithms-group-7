@@ -21,13 +21,13 @@ In the memory-based algorithm: First, we computed different similarity weightsï¼
 
 Model-based Algorithm - clustering:
 
-In the model-based algorithm: First, we wrote the EM Algorithm. Then, we estimated parameters of model using training data. After that, we carried out the cross-validation to choose number of classes. Finally, we made the evaluations.
+In the model-based algorithm: we applied the clustering model on the Microsoft data using EM algorithm. For the cross-validation, we separated the trianing data into two datasets, including a new training dataset and a new validation dataset. We then applied this cross-validation to these two new datasets calculating the rank scores for four different numbers of classes (2,6,8,10). We expected to find four accurancy levels with each of the four classes, in order to find the best number of classes to use. With this number, we could evaluate our model. However, becasue of lack of time and the numerous size of our dataset, we were unable to successfully run the cross-validaiton. Instead, we decided to use 6 as our numbder of classes, from which we got a best rank score of 11.5.
 
 Contribution statement:  
 
-- Jessica Zhang: Model-based Algorithm, base + cross-validation.
+- Jessica Zhang: Model-based Algorithm, cross-validation.
 
-- Jiongjiong Li: Model-based algorithm, wrote the MAE, ROC, ranking score function, code sum up
+- Jiongjiong Li: Model-based algorithm, wrote the MAE, ROC, ranking score function, code sum up.
 
 - Xiangyu Liu: Memory-based Algorithm, explored Mean Square Difference weights, simrank weigths, normalization on different data sets. Predicted the final ratings of each. Also tested Mean Square Difference weights with normalization and compared the performance. base + evaluation. 
 
