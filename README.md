@@ -17,14 +17,14 @@ Term: Spring 2018
 
 ## Memory-based Algorithm:
 
-In the memory-based algorithm: First, we computed different similarity weights，including Pearson and Spearman's correlation, vector similarity, entropy, mean-square difference and SimRank. Then, we applied normalization on their weights. Next, we predicted ratings on the training data set. For Microsft data, model performance from using different similarity weights is very close, with Vector Similarity (Cosine Similarity) slightly tops the rank score. Pearson takes least amount of time to run. After using rating normalization, Vector Similarity tops the rank score again and uses least amount of time.
+We computed different similarity weights including Pearson's and Spearman's correlation, vector similarity "cosine" measure, entropy-based uncertainty measure, mean-square difference (MSD), and SimRank. Next, we predicted ratings on training data and compared with test. Then, we applied rating normalization and compared with results before to examine if this change enhances model performance. For Microsft data, model performance from using different similarity weights is very close, with vector similarity (cosine similarity) slightly tops the rank score. Pearson takes least amount of time to run prediction, its rank score is the same as Spearman. After using rating normalization, model performance showed improvements for all similarity weights. Vector similarity tops the rank score again and uses least amount of time. Entropy comes next in rank score, but it uses significantly longer time to compute similarity weight, more than 20 times than MSD. MSD takes least amount of time to calculate similarity though its rank score is lowest before and after normalization.
 
 ![image](figs/Mem_based_MS_Comp.png)
 
 
 ## Model-based Algorithm - clustering:
 
-In the model-based algorithm: we applied the clustering model on the Microsoft data using EM algorithm. For the cross-validation, we separated the trianing data into two datasets, including a new training dataset and a new validation dataset. We then used these two new datasets to calculate the rank scores for four different numbers of classes (2, 6, 8, 10). We expected to find 4 accurancy levels for each of the four classes, in order to find the best number of classes to use. With this number, we could evaluate our model. However, becasue of lack of time and the numerous size of our dataset, we were unable to successfully run the cross-validaiton. Instead, we decided to use 6 as our numbder of classes, from which we got a best rank score of 32.3.
+In the model-based algorithm, we applied the clustering model on the Microsoft data using EM algorithm. For the cross-validation, we separated the trianing data into two datasets, including a new training dataset and a new validation dataset. We then used these two new datasets to calculate the rank scores for four different numbers of classes (2, 6, 8, 10). We expected to find 4 accurancy levels for each of the four classes, in order to find the best number of classes to use. With this number, we could evaluate our model. However, becasue of lack of time and the numerous size of our dataset, we were unable to successfully run the cross-validaiton. Instead, we decided to use 6 as our numbder of classes, from which we got a best rank score of 32.3.
 
 ## Contribution statement:  
 
