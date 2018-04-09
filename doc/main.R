@@ -331,7 +331,7 @@ best_C = 6
 best_para <- EM_train(train_data, C = best_C)
 gamma2 <- best_para$gamma
 assign_m<-best_para$assign_m
-best_pred <- EM_predict(w_test_UI, assign_m=assign_m,gamma=gamma2)
+best_pred <- EM_predict(train_data, assign_m=assign_m,gamma=gamma2)
 accuracy1 <- sum(best_pred)/sum(w_test_UI)
 best_rank_score <- rank_score(best_pred,w_test_UI,d=0,alpha=10)
 best_rank_score
