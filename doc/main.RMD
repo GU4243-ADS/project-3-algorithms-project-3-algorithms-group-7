@@ -4,7 +4,7 @@ author: "Group 7"
 date: "04/09/2018"
 output: html_document
 ---
-#install packages needed
+# install packages needed
 ```{r}
 packages.used <- c('lsa', 'infotheo','pROC','matrixStats')
 
@@ -19,8 +19,8 @@ if(length(packages.needed) > 0) {
 library(lsa)
 library(infotheo)
 ```
-#Memory-based Collaborative Filtering Algorithm Code
-##Which similarity weight to run
+# Memory-based Collaborative Filtering Algorithm Code
+## Which similarity weight to run
 ```{r}
 
 setwd("../lib")
@@ -53,7 +53,7 @@ if (run.simrank){
 source("functions_simrank.R")
 }
 ```
-##Building the UI matrix for the MS Data
+## Building the UI matrix for the MS Data
 ```{r}
 setwd("../data/MS_sample")
 # Load Microsoft data
@@ -68,7 +68,7 @@ MS_train <- MS_train[, 2:4] # get rid of first column: row number
 MS_UI <- MS_data_transform(MS_train)
 save(MS_UI, file = "../output/MS_UI.RData")
 ```
-##Building the UI matrix for the EachMovie Data
+## Building the UI matrix for the EachMovie Data
 ```{r}
 setwd("../data/eachmovie_sample")
 
@@ -80,7 +80,7 @@ movie_train <- movie_train[, 2:4] # get rid of first column: row number
 movie_UI <- movie_data_transform(movie_train)
 save(movie_UI, file = "../output/movie_UI.RData")
 ```
-##Calculating the Similarity Weights of the Users
+## Calculating the Similarity Weights of the Users
 ```{r}
 # Calculate the full similarity weights on the MS data
 # Below took 30 minutes on my Macbook and 14 on my iMac
@@ -95,7 +95,7 @@ save(MS_sim, file = "../output/MS_sim.RData")
 system.time(movie_sim <- calc_weight(movie_UI))
 save(movie_sim, file = "../output/movie_sim.RData")
 ```
-##Calculating the Predictions for the Users
+## Calculating the Predictions for the Users
 ```{r}
 # Calculate predictions for MS
 # This calculation took me 15 minutes
@@ -109,7 +109,7 @@ save(MS_pred, file = "../output/MS_pred.RData")
 system.time(movie_pred <- pred_matrix(movie_UI, movie_sim))
 save(movie_pred, file = "../output/movie_pred.RData")
 ```
-##Calculating Normalized Rating Predictions for the Users
+## Calculating Normalized Rating Predictions for the Users
 ```{r}
 # Calculate predictions for MS
 # This calculation took me 15 minutes
@@ -164,7 +164,7 @@ mae(m_test_UI, m_pred_msd)
 roc(m_test_UI, m_pred_msd)
 ```
 # Model-based Collaborative Filtering Algorithm Code 
-##Building the EM Algorithm for the MS Data
+## Building the EM Algorithm for the MS Data
 ```{r}
 EM_train <- function(train, C = 3, tau = 0.04, limit_iter = 150){
   #require package"matrixStats"
@@ -235,7 +235,7 @@ while(flag==1 & count < limit_iter){
 }
 
 ```
-##prediction
+## prediction function
 ```{r}
 EM_predict<-function(train,assign_m,gamma){
   pred_mat<-train
