@@ -40,7 +40,7 @@ In the model-based algorithm, we applied the clustering model on the Microsoft d
 
 - Jessica Zhang: Model-based Algorithm, first-draft of model-based algorithm and code sum up, cross-validation.
 
-- Jiongjiong Li: Model-based Algorithm, wrote the MAE, ROC, ranking score function, code sum up.
+- Jiongjiong Li: Model-based Algorithm: wrote the EM algorithm(both train function and predict function), used the algorithm to predict MS data. Evaluation: wrote the MAE, ROC, ranking score function, used the evaluation function to evaluate results of MS predicted data(Memory-based result and Model-based result). Final code sum up.
 
 - Xiangyu Liu: Memory-based Algorithm, explored Mean Square Difference weights, simrank weigths, normalization on different data sets. Predicted the final ratings of each. Also tested Mean Square Difference weights with normalization and compared the performance. base + evaluation. 
 
