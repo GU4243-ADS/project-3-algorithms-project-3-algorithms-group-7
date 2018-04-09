@@ -17,9 +17,15 @@ Term: Spring 2018
 
 ## Memory-based Algorithm:
 
-We computed different similarity weights including Pearson's and Spearman's correlation, vector similarity "cosine" measure, entropy-based uncertainty measure, mean-square difference (MSD), and SimRank. Next, we predicted ratings on training data and compared with test. Then, we applied rating normalization to examine if this change enhances model performance. For Microsft data, model performance from using different similarity weights is very close, with vector similarity slightly tops the rank score. Pearson takes least amount of time to run prediction, its rank score is the same as Spearman. After using rating normalization, model performance showed improvements for all similarity weights. Vector similarity stays top and uses least amount of time. Entropy comes next in rank score, but it uses significantly longer time to compute similarity weight, more than 20 times than MSD. MSD takes least amount of time to calculate similarity though its rank score is lowest before and after normalization.
+We computed different similarity weights including Pearson's and Spearman's correlation, vector similarity "cosine" measure, entropy-based uncertainty measure, mean-square difference (MSD), and SimRank. Next, we predicted ratings on training data and compared with test. Then, we applied rating normalization to examine if this change enhances model performance. 
+
+For Microsft data, model performance from using different similarity weights is very close, with vector similarity slightly tops the evaluation metric used here: rank score. Pearson takes least amount of time to run prediction, its rank score is the same as Spearman. After using rating normalization, model performance showed improvements for all similarity weights. Vector similarity stays top and uses least amount of time. Entropy comes next in rank score, but it uses significantly longer time to compute similarity weight, more than 20 times than MSD. MSD takes least amount of time to calculate similarity though its rank score is lowest before and after normalization.
 
 ![image](figs/Mem_based_MS_Comp.png)
+
+For movie data, Pearson and Spearman show best performance using Mean Absolute Error (MAE) and ROC before and after normalization. They take similar amout of time to run as the most time-efficient one. Same as in Microsoft data, vector similary and entropy are comparable in performance scoring (MAE and ROC), but entropy takes much longer to generate similarity weight. MSD uses least amount of time but performed less well than other similarity weights.
+
+![image](figs/Mem_based_movie_Comp.png)
 
 
 ## Model-based Algorithm - clustering:
