@@ -294,10 +294,8 @@ cv.accuracy<- c()
 for (i in 1:length(bc)) {
   cluster_train = EM_train(train_data, C=bc[i])
   gamma1 <- cluster_train$gamma
-  mu1 <- cluster_train$mu
-  pi1 <- cluster_train$pi
-  items1 <- cluster_train$items
-  cluster_pred = EM_predict(validation_data, gamma1, mu1, pi1, items1)
+  assign1<-cluster_train$assign_m
+  cluster_pred = EM_predict(train_data, assign_m=assign1,gamma=gamma1)
   cv.accuracy[i] <- rank_score(cluster_pred, validation_data, d=0, alpha=10)
 }
 
@@ -309,7 +307,7 @@ best_C = 6
 best_para <- EM_train(train_data, C = best_C)
 gamma2 <- best_para$gamma
 assign_m<-best_para$assign_m
-best_pred <- EM_predict(w_test_UI, assign_m=assign_m, gamma=gamma2)
+best_pred <- EM_predict(train_data, assign_m=assign_m, gamma=gamma2)
 accuracy1 <- sum(best_pred)/sum(w_test_UI)
 best_rank_score <- rank_score(best_pred,w_test_UI,d=0,alpha=10)
 best_rank_score
