@@ -26,12 +26,33 @@ library(infotheo)
 
 setwd("../lib")
 #change source function as needed
+
+# Which similarity weight to run
+run.pearson <- TRUE
+run.spearman <- FALSE
+run.vs <- FALSE
+run.entropy <- FALSE
+run.msd <- FALSE
+run.simrank <- FALSE
+
+if (run.pearson){
 source("functions_pearson.R")
+}
+if (run.spearman){
 source("functions_spearman.R")
+}
+if (run.vs){
 source("functions_vs.R")
+}
+if (run.entropy){
 source("functions_entropy.R")
+}
+if (run.msd){
 source("functions_msd.R")
+}
+if (run.simrank){
 source("functions_simrank.R")
+}
 
 
 setwd("../data/MS_sample")
